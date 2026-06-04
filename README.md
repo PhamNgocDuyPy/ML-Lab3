@@ -1,8 +1,8 @@
-# 🧠 Mechanistic Interpretability for Language Models — Tutorial Demo
+#  Mechanistic Interpretability for Language Models — Tutorial Demo
 
 Demo code cho tutorial **"A Practical Review of Mechanistic Interpretability for Language Models"**, thực hiện các kỹ thuật MI trên **GPT-2 Small (124M)**.
 
-## 📋 Mục lục
+##  Mục lục
 
 | Giai đoạn | File | Mô tả | Tutorial Method |
 |-----------|------|--------|-----------------|
@@ -13,7 +13,7 @@ Demo code cho tutorial **"A Practical Review of Mechanistic Interpretability for
 | 5 | `logit_lens.py` | Vocabulary Projection | Method 2: Vocab Projection |
 | 6 | `app.py` | Gradio Web UI | Interactive Demo |
 
-## 🚀 Cài đặt
+##  Cài đặt
 
 ```bash
 # Clone repository
@@ -29,7 +29,7 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-## 🏃 Chạy Pipeline
+##  Chạy Pipeline
 
 Chạy tuần tự từng bước:
 
@@ -54,7 +54,7 @@ python app.py
 # → Mở browser tại http://localhost:7860
 ```
 
-## 📁 Cấu trúc thư mục
+##  Cấu trúc thư mục
 
 ```
 ML-Lab3/
@@ -86,7 +86,7 @@ ML-Lab3/
     └── logit_lens_*.png
 ```
 
-## 🔬 Chi tiết kỹ thuật
+##  Chi tiết kỹ thuật
 
 ### Mô hình: GPT-2 Small
 - **Tham số**: 124M
@@ -111,7 +111,7 @@ Input Text → GPT-2 → [Forward Hooks] → Activations
                                     Steering: h_new = h_old + c × v
 ```
 
-## 📚 Tài liệu tham khảo
+##  Tài liệu tham khảo
 
 1. Wang+22: *Interpretability in the Wild: A Circuit for IOI in GPT-2 Small* (ICLR 2022)
 2. Bricken+23: *Towards Monosemanticity: Decomposing LMs with Dictionary Learning*
@@ -121,12 +121,3 @@ Input Text → GPT-2 → [Forward Hooks] → Activations
 6. Belrose+23: *Eliciting Latent Predictions with the Tuned Lens*
 7. Conmy+23: *Towards Automated Circuit Discovery for Mechanistic Interpretability* (NeurIPS 2023)
 
-## 👥 Phân công
-
-| Thành viên | Phần đóng góp |
-|------------|---------------|
-| Duy | GĐ 1: Trích xuất Activation + Attention Visualization |
-| Kim | GĐ 2: Linear Probing + Feature Direction |
-| Tín | GĐ 3: Sparse Autoencoder + Feature Analysis |
-| Tuấn | GĐ 4: Steering / Causal Intervention |
-| Cả nhóm | GĐ 5-6: Logit Lens + Web UI |
