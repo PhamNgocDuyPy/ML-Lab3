@@ -214,6 +214,11 @@ def main():
     n_samples, n_layers, d_model = all_activations.shape
     print(f"[*] Loaded {n_samples} samples, {n_layers} layers, d_model={d_model}")
     
+    # Chuẩn hóa activations theo từng layer để tối ưu hóa hội tụ
+    mean = all_activations.mean(dim=0, keepdim=True)
+    std = all_activations.std(dim=0, keepdim=True) + 1e-8
+    all_activations = (all_activations - mean) / std
+    
     # Bước 2: Train probe cho mỗi layer
     accuracies = []
     f1_scores = []

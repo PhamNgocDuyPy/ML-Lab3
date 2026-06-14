@@ -169,10 +169,8 @@ class ActivationExtractor:
             
             for layer_idx in range(n_layers):
                 if layer_idx in residual:
-                    # Lấy activation tại last token position
-                    # Shape: [1, seq_len, d_model] → [d_model]
-                    seq_len = residual[layer_idx].shape[1]
-                    all_activations[i, layer_idx] = residual[layer_idx][0, seq_len - 1]
+                    # Sử dụng mean pooling qua toàn bộ sequence để thu được ngữ nghĩa tốt hơn cho sentiment
+                    all_activations[i, layer_idx] = residual[layer_idx][0].mean(dim=0)
             
             all_attention.append(attention)
         
@@ -194,7 +192,7 @@ class ActivationExtractor:
 
 
 def load_sentiment_dataset(
-    max_samples: int = 500,
+    max_samples: int = 400,
 ) -> Tuple[List[str], List[int]]:
     """
     Tải dataset SST-2 (Stanford Sentiment Treebank) cho sentiment analysis.
@@ -202,8 +200,11 @@ def load_sentiment_dataset(
     SST-2 là dataset phân loại cảm xúc câu tiếng Anh (positive/negative),
     thường dùng trong nghiên cứu NLP và phù hợp cho Linear Probing trên GPT-2.
     
+    Sử dụng split="validation" để lấy các câu hoàn chỉnh thay vì các mảnh cụm từ
+    (phrase fragments) trong train split, giúp cải thiện độ chính xác dò tìm (probing accuracy).
+    
     Args:
-        max_samples: Số lượng mẫu tối đa mỗi class
+        max_samples: Số lượng mẫu tối đa mỗi class (SST-2 validation có ~400 samples mỗi class)
         
     Returns:
         Tuple[List[str], List[int]]: (texts, labels)
@@ -211,8 +212,8 @@ def load_sentiment_dataset(
     """
     from datasets import load_dataset
     
-    print("[*] Loading SST-2 dataset...")
-    dataset = load_dataset("stanfordnlp/sst2", split="train")
+    print("[*] Loading SST-2 validation dataset...")
+    dataset = load_dataset("stanfordnlp/sst2", split="validation")
     
     texts = []
     labels = []
@@ -252,7 +253,7 @@ def main():
     Bước 5: Lưu kết quả
     """
     parser = argparse.ArgumentParser(description="Extract activations from GPT-2")
-    parser.add_argument("--max_samples", type=int, default=500, help="Max samples per class")
+    parser.add_argument("--max_samples", type=int, default=400, help="Max samples per class")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--output_dir", type=str, default="outputs", help="Output directory")
     parser.add_argument("--checkpoint_dir", type=str, default="checkpoints", help="Checkpoint directory")
