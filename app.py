@@ -196,6 +196,31 @@ def show_sae_results():
             info += f"\n**Feature #{feat_idx}**:\n"
             for ex in examples[:2]:
                 info += f"- [{ex['activation']:.3f}] \"{ex['text'][:100]}...\"\n"
+        
+        # Tự động dựng biểu đồ độ thưa trên dữ liệu thực tế
+        activation_path = os.path.join("checkpoints", "activations.pt")
+        if os.path.exists(activation_path):
+            try:
+                act_data = torch.load(activation_path, weights_only=False)
+                all_activations = act_data["activations"]
+                best_layer = sae_data["best_layer"]
+                layer_activations = all_activations[:, best_layer, :].to(DEVICE)
+                
+                from train_sae import SparseAutoencoder
+                sae = SparseAutoencoder(
+                    d_model=sae_data["d_model"],
+                    expansion_factor=sae_data["expansion_factor"],
+                    l1_coeff=sae_data["l1_coeff"]
+                ).to(DEVICE)
+                sae.load_state_dict(sae_data["state_dict"])
+                sae.eval()
+                
+                with torch.no_grad():
+                    z = sae.encode(layer_activations).cpu().numpy()
+                
+                fig_sparsity = plot_sparsity_histogram(z)
+            except Exception as e:
+                print(f"[Error] Failed to generate sparsity plot: {e}")
     
     return fig_loss, fig_sparsity, info
 
@@ -361,12 +386,28 @@ def build_app() -> gr.Blocks:
     
     custom_css = """
     .gradio-container {
-        max-width: 1200px !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
         font-family: 'Inter', 'Segoe UI', sans-serif !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
     }
     .tab-nav button {
         font-size: 16px !important;
         font-weight: 600 !important;
+    }
+    /* Centering and scaling plots */
+    .gradio-plot {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        min-height: 500px !important;
+    }
+    .gradio-plot img, .gradio-plot svg {
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
     }
     """
     
@@ -451,9 +492,9 @@ def build_app() -> gr.Blocks:
                 
                 sae_btn = gr.Button("🧠 Show SAE Results", variant="primary")
                 
-                with gr.Row():
-                    sae_loss_plot = gr.Plot(label="Loss Curve")
-                    sae_sparsity_plot = gr.Plot(label="Sparsity Histogram")
+                # Stack plots vertically for uniform layout and maximum width
+                sae_loss_plot = gr.Plot(label="Loss Curve")
+                sae_sparsity_plot = gr.Plot(label="Sparsity Histogram")
                 
                 sae_info = gr.Markdown()
                 
@@ -547,7 +588,7 @@ def build_app() -> gr.Blocks:
         - Gurnee+23: *Finding Neurons in a Haystack*
         - Elhage+22: *Toy Models of Superposition*
         
-        **Team**: Duy · Kim · Tín · Tuấn | CSC14005 — Nhập môn Học máy
+        **Team**: Duy · Kim · Tín · Tuấn · Trường | CSC14005 — Nhập môn Học máy
         """)
     
     return app

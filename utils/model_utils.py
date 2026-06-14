@@ -66,7 +66,7 @@ def load_model_and_tokenizer(
     tokenizer = GPT2Tokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
     
-    model = GPT2LMHeadModel.from_pretrained(model_name)
+    model = GPT2LMHeadModel.from_pretrained(model_name, attn_implementation="eager")
     model = model.to(device)
     model.eval()
     

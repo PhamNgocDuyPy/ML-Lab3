@@ -86,10 +86,11 @@ class ActivationExtractor:
             attn = block.attn
             
             def attn_hook(module, input, output, idx=layer_idx):
-                # GPT2Attention trả về (attn_output, present, attn_weights)
+                # GPT2Attention trả về (attn_output, attn_weights) hoặc (attn_output, present, attn_weights) tùy phiên bản
                 # attn_weights có shape [batch, n_heads, seq_len, seq_len]
-                if len(output) > 2 and output[2] is not None:
-                    self.attention_patterns[idx] = output[2].detach().cpu()
+                attn_weights = output[1] if len(output) > 1 else None
+                if attn_weights is not None:
+                    self.attention_patterns[idx] = attn_weights.detach().cpu()
             
             handle = attn.register_forward_hook(attn_hook)
             self.hooks.append(handle)

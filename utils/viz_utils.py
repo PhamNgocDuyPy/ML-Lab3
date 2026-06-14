@@ -57,7 +57,7 @@ def plot_attention_heatmap(
     Returns:
         plt.Figure: Figure object của matplotlib
     """
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(12, 10))
     
     sns.heatmap(
         attention_weights,
@@ -115,7 +115,7 @@ def plot_probe_accuracy_per_layer(
     n_layers = len(accuracies)
     layers = list(range(n_layers))
     
-    fig, ax = plt.subplots(figsize=(12, 5))
+    fig, ax = plt.subplots(figsize=(14, 6))
     
     bar_width = 0.35
     x = np.arange(n_layers)
@@ -187,7 +187,7 @@ def plot_sae_loss_curve(
     Returns:
         plt.Figure: Figure object
     """
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(12, 6))
     
     epochs = range(1, len(total_losses) + 1)
     
@@ -230,7 +230,7 @@ def plot_sparsity_histogram(
     Returns:
         plt.Figure: Figure object
     """
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
     
     # Histogram 1: Phân bố tỷ lệ kích hoạt (mỗi feature kích hoạt bao nhiêu % samples)
     feature_activation_rate = (activations > 0).mean(axis=0)
